@@ -1,4 +1,4 @@
-The DOM Is a Tree
+Working with the Document Object Model
 ---
 
 ## Objectives
@@ -7,189 +7,104 @@ The DOM Is a Tree
 2. Describe how the DOM works as a tree
 3. Practice exploring the DOM
 
-## A tree? Like, with leaves?
-
-What do we mean when we say that the DOM is a tree? Are we saying it has leaves?
-
-Well, yes, metaphorically.
-
-Trees make a good metaphor for the DOM because we intuitively understand how we might traverse them. Starting at the roots, one can climb up the tree and out to the farthest — and thinnest — branches.
-
-The thicker a branch is, the stronger its connections are: the more it holds within it.
-
-Likewise, the thinner a branch is, the less it holds inside.
-
-The DOM works basically the same way, except we usually talk about the root as being at the top of the DOM and the leaves being the most deeply nested HTML elements. So basically, we can imagine a tree turned on its head.
-
 ## The DOM
 
-An interesting property of trees is that every tree can contain _subtrees_, which we can, for all intents and purposes, treat independently of their parent trees.
+From the Wikipedia homepage, open your console and type in document.  
 
-Practically speaking, the DOM begins at `<html>`, but we should think carefully about manipulating what's between the `<head></head>` tags. Instead, we can look at the DOM subtree with its root at `<body>` and only deal with things that will be visible on the page. Within that tree, we might also deal with subtrees. So, for example, if we have
-
-``` html
-<body>
-  <div>
-    <p>Hi!</p>
-  </div>
-
-  <div>
-    <p>Bye!</p>
-  </div>
-</body>
+```javascript
+document
+	# document
 ```
 
-We would have a tree that looks like
+If you click on the arrow next to the word document, you will see that document holds one direct subcomponent, html, which itself has two sub-components: head and body.  The document object encloses the HTML, and the HTML element, encloses the sub-components.  In other words, there is a hierarchy here.   
 
 ``` shell
-        body
-        /  \
-      div   div
-      /      \
-     p        p
-    /          \
- "Hi!"        "Bye!"
+	  document
+		  |
+         html
+        /    \
+      head    body
 ```
 
-Pretty simple, right? Similarly, if we had a DOM subtree that looked like
+The document is at the top, HTML is underneath document, and there are two components directly under HTML.  In computer science, we call this structure a tree.  In the tree above, the document is the **parent** of HTML, and HTML is the **child** of document.  HTML itself is also the parent of head and body.    
 
-``` html
-<div>
-  <div>
-    <h1>Hello!</h1>
-  </div>
+We can see this through the console.  
 
-  <div>
-    <h5>Sup?</h5>
-  </div>
-</div>
+```js
+document.children
+	[html.js-enabled]
+	
+let html = document.querySelector('html')
+html.children
+	[head, body#www-wikipedia-org.jsl10n-visible]
 ```
 
-We could simply treat it as the tree
+Ok, now that we can see what we mean by parents and children, let's represent a couple of other terms.  Each element, document, html, head, and body are called nodes of the tree.  The lines between them are called edges or vertices.  
 
 ``` shell
-         div
-        /  \
-      div   div
-      /      \
-    h1        h5
-    /          \
- "Hello!"     "Sup?"
+	  document (node)
+		  | (vertex)
+         html (n)
+     (v) /    \ (v)
+   (n) head    body (n)
 ```
 
-### Finding a Node
+The word node, is found throughout the DOM api.
 
-Remember when we said that we could organize our tree in such a way that a node's metadata didn't interfere with finding its children? It turns out that not only does providing additional information about a node make it more _useful_, it also makes it easier to find.
-
-JavaScript exposes a few ways of finding DOM nodes more or less directly, courtesy of the `document` object.
-
-#### `document.getElementById()`
-
-This method provides the quickest access to a node, but it requires that we know something very specific about it — its `id`. Since IDs must be unique, this method only returns one element. (If you have two elements with the same ID, this method returns the first one — keep your IDs unique!) Given the following DOM tree
-
-``` html
-<div>
-  <h5 id="greeting">Hello!</h5>
-</div>
+```javascript
+document.nodeName 
+	"document"
+document.childNodes
+	[<!DOCTYPE html>, html.js-enabled]
 ```
 
-we could find the `h5` element with `document.getElementById('greeting')`. Notice how the `id` that we pass to `getElementById` is identical to the `id` in `<h5 id="greeting">`. We can assign properties to HTML nodes (or elements) simply by including them between the `<>` tags at the start of the element (so not in the `</h5>` tag, in this case).
+### Working with a nodelist
 
-**Try it out!**
+Let's take a deeper look at the return value of `document.childNodes`.  
 
-Open up your web inspector (command+option+j on OS X) and find an element on the page — make note of its `id`. Then open up your console, type `document.getElementById('theIdYouTookNoteOf')`, and check out your handy dandy DOM node. Try changing a few of its properties!
+```js
+document.childNodes
+	[<!DOCTYPE html>, html.js-enabled]
 
-#### `document.getElementsByClassName()`
-
-This method, as its name implies, finds elements by their `className`. Unlike `id`, `className` does not need to be unique; as such, this method returns an HTMLCollection (basically a list of DOM nodes — note that it is _not_ an array, even though it has a `length` property) of all the elements with the given class. You can iterate over an HTMLCollection with a simple `for` loop.
-
-Given the following DOM tree
-
-``` html
-<!-- the `className` attribute is called `class` in HTML -- it's a bummer -->
-<div>
-  <div class="banner">
-    <h1>Hello!</h1>
-  </div>
-
-  <div class="banner">
-    <h1>Sup?</h1>
-  </div>
-
-  <div class="banner">
-    <h5>Tinier heading</h5>
-  </div>
-</div>
+document.childNodes.constructor
+	ƒ NodeList() { [native code] }
 ```
 
-we could find all of the elements with `className === 'banner'` by calling `document.getElementsByClassName('banner')`.
+As you can see, it returns to us something called a nodeList.  A nodeList is similar to an array, for example we can retrieve elements by the index.
 
-**Try it out!**
-
-Inspect the web page again, this time making note of a className. Get all elements with that className and give 'em a look. Remember, you can use a `for` loop to loop through them. (You can also assign the return value of `document.getElementsByClassName()` to a variable: `var elements = document.getElementsByClassName('banner')`.)
-
-#### `document.getElementsByTagName()`
-
-Suppose you don't know an element's ID but you do know its tag name (the tag name is the main thing between the `<>`, e.g., `'div'`, `'span'`, `'h1'`, etc.). Since tag names aren't unique, this method returns an HTMLCollection of 0 to many nodes with the given tag.
-
-**Try it out!**
-
-Explore the DOM in console by typing `document.getElementsByTagName('div')`. Remember, you can iterate through these elements using a simple `for` loop.
-
-### Finding a Node without knowing anything about it
-
-What if we know next to nothing about an element? Or what if we're just interested in finding out more about the child nodes of a given element? This is where our knowledge of trees and nested data structures comes in handy!
-
-Given the following DOM tree (which you can find in `index.html` — feel free to open the file up in your browser to play along!)
-
-``` html
-<main>
-  <div>
-    <div>
-      <p>Hello!</p>
-    </div>
-  </div>
-  <div>
-    <div>
-      <p>Hello!</p>
-    </div>
-  </div>
-  <div>
-    <div>
-      <p>Hello!</p>
-    </div>
-  </div>
-</main>
+```js
+	let html = document.querySelector('html')
+	
+	html.childNodes
+	  [head, text, body#www-wikipedia-org.jsl10n-visible] //nodeList
+	  
+	html.childNodes[0]
+		<head> </head>
 ```
 
-how would we go about changing only the second "Hello!" to "Goodbye!"? We couldn't just iterate over `document.getElementsByTagName('div')`, checking for `textContent === "Hello!"`, because we'd inadvertently change all three "Hello!"s. More importantly, the DOM might change (more on that later), and we want to make sure that we're updating the right element.
+However, there are other methods where we cannot use a nodeList like an array.  For example, there is no `map` method on a nodeList.  But lucky for us it is fairly easy to convery array-like objects in JavaScript to an actual array.  Afterwards, we can then use all of our array methods.  Here let's see an example: 
 
-Let's start by getting the `<main>` element:
+```js
+let html = document.querySelector('html')
+	
+let children = html.childNodes
 
-``` javascript
-const main = document.getElementsByTagName('main')[0]
+children.map
+// undefined
+	
+let childrenArray = Array.from(children)
+childrenArray.map(function(node){ return node.nodeName })
+	["HEAD", "#text", "BODY"]
+childrenArray.constructor
+  ƒ Array() { [native code] }
 ```
 
-Then we can get the children of `main` using `main.children`, so we can get the second child with `main.children[1]`.
-
-``` javascript
-const div = main.children[1]
-```
-
-Finally, we can get and update our `<p>` element with
-
-``` javascript
-// we can call getElementsByTagName() on an _element_
-// to constrain the search to its children!
-const p = div.getElementsByTagName('p')[0]
-
-p.textContent = "Goodbye!"
-```
-
-Obviously, this way of accessing that text isn't fully generic, but it does a good job of demonstrating the basic tools available to us for finding and manipulating HTML elements.
+As you can see from the code above, when working with the nodelist, which we often get when working with elements in the DOM, we cannot access some of our favorite iterator methods.  However, after we coerce the nodelist into an array by using the `Array.from` method, we can use all of our favorite array methods like `map`.
 
 ## Resources
 
 - [MDN - Document Object Model](https://developer.mozilla.org/en-US/docs/Web/API/Document_Object_Model)
+- [MDN - Node](https://developer.mozilla.org/en-US/docs/Web/API/Node)
+- [MDN - NodeList](https://developer.mozilla.org/en-US/docs/Web/API/NodeList)
 
 <p class='util--hide'>View <a href='https://learn.co/lessons/the-dom-is-a-tree'>The DOM is a Tree</a> on Learn.co and start learning to code for free.</p>
