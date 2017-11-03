@@ -19,11 +19,11 @@ document
 If you click on the arrow next to the word document, you will see that document holds one direct subcomponent, html, which itself has two sub-components: head and body.  The document object encloses the HTML, and the HTML element, encloses the sub-components.  In other words, there is a hierarchy here.   
 
 ``` shell
-	  document
-		  |
-         html
-        /    \
-      head    body
+	document
+  	|
+ 	 html
+	/    \
+head    body
 ```
 
 The document is at the top, HTML is underneath document, and there are two components directly under HTML.  In computer science, we call this structure a tree.  In the tree above, the document is the **parent** of HTML, and HTML is the **child** of document.  HTML itself is also the parent of head and body.    
@@ -33,7 +33,7 @@ We can see this through the console.
 ```js
 document.children
 	[html.js-enabled]
-	
+
 let html = document.querySelector('html')
 html.children
 	[head, body#www-wikipedia-org.jsl10n-visible]
@@ -52,7 +52,7 @@ Ok, now that we can see what we mean by parents and children, let's represent a 
 The word node, is found throughout the DOM api.
 
 ```javascript
-document.nodeName 
+document.nodeName
 	"document"
 document.childNodes
 	[<!DOCTYPE html>, html.js-enabled]
@@ -73,25 +73,25 @@ document.childNodes.constructor
 As you can see, it returns to us something called a nodeList.  A nodeList is similar to an array, for example we can retrieve elements by the index.
 
 ```js
-	let html = document.querySelector('html')
-	
-	html.childNodes
-	  [head, text, body#www-wikipedia-org.jsl10n-visible] //nodeList
-	  
-	html.childNodes[0]
-		<head> </head>
+let html = document.querySelector('html')
+
+html.childNodes
+  [head, text, body#www-wikipedia-org.jsl10n-visible] //nodeList
+
+html.childNodes[0]
+	<head> </head>
 ```
 
-However, there are other methods where we cannot use a nodeList like an array.  For example, there is no `map` method on a nodeList.  But lucky for us it is fairly easy to convery array-like objects in JavaScript to an actual array.  Afterwards, we can then use all of our array methods.  Here let's see an example: 
+However, there are other methods where we cannot use a nodeList like an array.  For example, there is no `map` method on a nodeList.  But lucky for us it is fairly easy to convery array-like objects in JavaScript to an actual array.  Afterwards, we can then use all of our array methods.  Here let's see an example:
 
 ```js
 let html = document.querySelector('html')
-	
+
 let children = html.childNodes
 
 children.map
 // undefined
-	
+
 let childrenArray = Array.from(children)
 childrenArray.map(function(node){ return node.nodeName })
 	["HEAD", "#text", "BODY"]
