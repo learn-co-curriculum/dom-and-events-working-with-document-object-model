@@ -42,10 +42,10 @@ html.children
 Ok, now that we can see what we mean by parents and children, let's represent a couple of other terms.  Each element, document, html, head, and body are called nodes of the tree.  The lines between them are called edges or vertices.  
 
 ``` shell
-	  document (node)
-			  | (vertex)
-	     html (n)
-	(v) /    \ (v)
+    document (node)
+        | (vertex)
+       html (n)
+  (v) /    \ (v)
 (n) head    body (n)
 ```
 
