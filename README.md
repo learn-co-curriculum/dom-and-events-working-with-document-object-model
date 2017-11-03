@@ -19,10 +19,10 @@ document
 If you click on the arrow next to the word document, you will see that document holds one direct subcomponent, html, which itself has two sub-components: head and body.  The document object encloses the HTML, and the HTML element, encloses the sub-components.  In other words, there is a hierarchy here.   
 
 ``` shell
-	document
-  	|
- 	 html
-	/    \
+  document
+     |
+    html
+   /    \
 head    body
 ```
 
