@@ -13,7 +13,7 @@ From the Wikipedia homepage, open your console and type in document.
 
 ```javascript
 document
-	# document
+// # document
 ```
 
 If you click on the arrow next to the word document, you will see that document holds one direct subcomponent, html, which itself has two sub-components: head and body.  The document object encloses the HTML, and the HTML element, encloses the sub-components.  In other words, there is a hierarchy here.   
@@ -32,30 +32,30 @@ We can see this through the console.
 
 ```js
 document.children
-	[html.js-enabled]
+// [html.js-enabled]
 
 let html = document.querySelector('html')
 html.children
-	[head, body#www-wikipedia-org.jsl10n-visible]
+// [head, body#www-wikipedia-org.jsl10n-visible]
 ```
 
 Ok, now that we can see what we mean by parents and children, let's represent a couple of other terms.  Each element, document, html, head, and body are called nodes of the tree.  The lines between them are called edges or vertices.  
 
 ``` shell
 	  document (node)
-		  | (vertex)
-         html (n)
-     (v) /    \ (v)
-   (n) head    body (n)
+			  | (vertex)
+	     html (n)
+	(v) /    \ (v)
+(n) head    body (n)
 ```
 
 The word node, is found throughout the DOM api.
 
 ```javascript
 document.nodeName
-	"document"
+// "document"
 document.childNodes
-	[<!DOCTYPE html>, html.js-enabled]
+// [<!DOCTYPE html>, html.js-enabled]
 ```
 
 ### Working with a nodelist
@@ -64,22 +64,21 @@ Let's take a deeper look at the return value of `document.childNodes`.
 
 ```js
 document.childNodes
-	[<!DOCTYPE html>, html.js-enabled]
+// [<!DOCTYPE html>, html.js-enabled]
 
 document.childNodes.constructor
-	ƒ NodeList() { [native code] }
+// ƒ NodeList() { [native code] }
 ```
 
 As you can see, it returns to us something called a nodeList.  A nodeList is similar to an array, for example we can retrieve elements by the index.
 
 ```js
 let html = document.querySelector('html')
-
 html.childNodes
-  [head, text, body#www-wikipedia-org.jsl10n-visible] //nodeList
+// [head, text, body#www-wikipedia-org.jsl10n-visible]
 
 html.childNodes[0]
-	<head> </head>
+// <head> </head>
 ```
 
 However, there are other methods where we cannot use a nodeList like an array.  For example, there is no `map` method on a nodeList.  But lucky for us it is fairly easy to convery array-like objects in JavaScript to an actual array.  Afterwards, we can then use all of our array methods.  Here let's see an example:
@@ -88,15 +87,14 @@ However, there are other methods where we cannot use a nodeList like an array.  
 let html = document.querySelector('html')
 
 let children = html.childNodes
-
 children.map
 // undefined
 
 let childrenArray = Array.from(children)
 childrenArray.map(function(node){ return node.nodeName })
-	["HEAD", "#text", "BODY"]
+// ["HEAD", "#text", "BODY"]
 childrenArray.constructor
-  ƒ Array() { [native code] }
+// ƒ Array() { [native code] }
 ```
 
 As you can see from the code above, when working with the nodelist, which we often get when working with elements in the DOM, we cannot access some of our favorite iterator methods.  However, after we coerce the nodelist into an array by using the `Array.from` method, we can use all of our favorite array methods like `map`.
